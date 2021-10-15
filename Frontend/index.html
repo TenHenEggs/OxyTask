@@ -1,11 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script>
+        const server = 'http://oxy.sytes.net';
+        function fetchTables() {
+            fetch(server + '/api/table', {
+                method: 'GET',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then(res => {
+                let layout = '<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-10 gy-4">';
+                res["tables"].forEach(table => {
+                    layout += '<div class="col"><div class="bg-light p-3 border text-center">' + table + '</div></div>';
+                });
+                layout += '</div>';
+                document.getElementById("tables").innerHTML = layout;
+            }).catch(err => console.log(err));
+        }
+    </script>
 </head>
-<body>
-    <h1>HELLO WORLD</h1>
+<body onload="fetchTables()">
+    <div id="tables" class="container-fluid">
+    </div>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
 </body>
 </html>

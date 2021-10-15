@@ -7,7 +7,7 @@ let window;
 function createWindow(){
     window = new BrowserWindow(
         {
-            width: 1280, 
+            width: 1280,
             height: 720,
             title: 'OxyTask'
         }
