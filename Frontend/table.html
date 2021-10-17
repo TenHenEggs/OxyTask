@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script>
+        const server = 'http://localhost:8080';
+
+        function goBack() {
+            sessionStorage.tableId = undefined;
+            location.href = 'index.html';
+        }
+
+        function fetchTableData() {
+            fetch(server + '/api/tables', {
+                method: 'GET',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then(res => {
+                const table = res.find(table => sessionStorage.tableId == table.id);
+                document.getElementById('test').innerHTML = table.name;
+            }).catch(err => console.log(err));
+        }
+    </script>
+</head>
+<body onLoad="fetchTableData()">
+    <button type="button" class="btn btn-primary" onclick="goBack()">←</button>
+    <p id="test"></p>
+    <script>require('popper.js');</script>
+    <script>require('bootstrap');</script>
+</body>
+</html>

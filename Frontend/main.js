@@ -9,7 +9,11 @@ function createWindow(){
         {
             width: 1280,
             height: 720,
-            title: 'OxyTask'
+            title: 'OxyTask',
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
         }
     );
     window.loadURL(
@@ -17,7 +21,7 @@ function createWindow(){
             {
                 pathname: path.join(__dirname, 'index.html'),
                 protocol: 'file:',
-                slashes: true
+                slashes: true,
             }
         )
     );
