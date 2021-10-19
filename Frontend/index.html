@@ -4,40 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <script>
-        const server = 'http://localhost:8080';
-
-        function fetchTables() {
-            fetch(server + '/api/tables', {
-                method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            }).then(res => res.json()).then(res => {
-                let layout = '<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-10 gy-4 p-3">';
-                res.forEach(table => {
-                    layout += '<div class="col"><button type="button" class="btn btn-light p-3 text-center w-100" onclick="openTable('
-                    layout += table.id
-                    layout += ')">';
-                    layout += table.name;
-                    layout += '</button></div>';
-                });
-                layout += '</div>';
-                document.getElementById("tables").innerHTML = layout;
-            }).catch(err => console.log(err));
-        }
-
-        function openTable(id) {
-            sessionStorage.tableId = id;
-            location.href = 'table.html';
-        }
-    </script>
 </head>
-<body onload="fetchTables()">
-    <div id="tables" class="container-fluid">
+<body class="bg-dark">
+    <div class="container-fluid text-center text-white mb-3">
+        <div class="row">
+            <div class="col-9 border border-3 border-primary p-2">
+                Twoje tablice
+            </div>
+            <div class="col-3 text-success p-0">
+                <button id="new" type="button" class="btn btn-outline-success h-100 w-100 rounded-0" data-bs-toggle="modal" data-bs-target="#tableCreationModal">
+                    +Nowa
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="container-fluid">
+        <div id="tables" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-10 gy-4 p-3">
+        </div>
+    </div>
+    <div class="modal" id="tableDeletionModal" tabindex="-1"><div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Usuwanie tablicy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć tablicę <span id="modalTableName" class="text-info"></span>? Operacji tej nie można cofnąć!
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalDeleteButton">Usuń</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="tableCreationModal" tabindex="-1"><div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Tworzenie tablicy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="flow-control w-100" id="modalNewTableName" placeholder="Nazwa tablicy">
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalCreationButton">Utwórz</button>
+                </div>
+            </div>
+        </div>
     </div>
     <script>require('popper.js');</script>
     <script>require('bootstrap');</script>
+    <script>require('./index.js')</script>
 </body>
 </html>
