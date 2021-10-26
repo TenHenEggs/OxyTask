@@ -1,4 +1,5 @@
-const server = 'http://localhost:8080';
+const utilities = require('./utilities.js');
+
 let tables = [];
 
 function openTable(id) {
@@ -49,29 +50,15 @@ function addTableButton(table) {
     document.getElementById('tables').appendChild(finalCol);
 }
 
-function request(url, method, body) {
-    return fetch(server + url, {
-        method: method,
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    }).then(res => {
-        if(res.status != 200) throw new Error('Request failed with code ' + res.status);
-        return res.json();
-    });
-}
-
 function fetchTables() {
-    request('/api/tables', 'GET').then(res => {
+    utilities.request('/api/tables', 'GET').then(res => {
         tables = res;
         res.forEach(addTableButton);
     }).catch(err => console.log(err));
 }
 
 function deleteTable(id) {
-    request('/api/tables/' + id, 'DELETE').then(() => {
+    utilities.request('/api/tables/' + id, 'DELETE').then(() => {
         document.getElementById('tables').removeChild(document.getElementById('table_' + id));
     }).catch(err => console.log(err));
 }
@@ -79,7 +66,7 @@ function deleteTable(id) {
 function createTable() {
     let table = {};
     table.name = document.getElementById('modalNewTableName').value;
-    request('/api/tables', 'POST', {
+    utilities.request('/api/tables', 'POST', {
         'name': table.name
     }).then(res => {
         if(res.id == undefined) throw new Error('Invalid response from server');

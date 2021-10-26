@@ -1,35 +1,63 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <script>
-        const server = 'http://localhost:8080';
-
-        function goBack() {
-            sessionStorage.tableId = undefined;
-            location.href = 'index.html';
-        }
-
-        function fetchTableData() {
-            fetch(server + '/api/tables', {
-                method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            }).then(res => res.json()).then(res => {
-                const table = res.find(table => sessionStorage.tableId == table.id);
-                document.getElementById('test').innerHTML = table.name;
-            }).catch(err => console.log(err));
-        }
-    </script>
+    <link rel="stylesheet" href="./scrollbar.css">
+    <link rel="stylesheet" href="./table.css">
 </head>
-<body onLoad="fetchTableData()">
-    <button type="button" class="btn btn-primary" onclick="goBack()">←</button>
-    <p id="test"></p>
+<body class="bg-dark d-flex flex-column h-100">
+    <div class="fluid-container mb-3 text-white">
+        <div class="row g-1 m-0">
+            <div class="col-1 barbutton">
+                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="back">
+                    <img class="mh-100 mw-100" src="back.png">
+                </button>
+            </div>
+            <div class="col text-center align-self-center">
+                <p class="text-center mb-0 fs-1 fw-bold">
+                    Nazwa Tablicy
+                </p>
+            </div>
+            <div class="col-1 barbutton">
+                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="menu">
+                    <img class="mh-100 mw-100" src="menu.png">
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="fluid-container bg-dark text-white text-center fs-5 fw-bold overflow-auto flex-grow-1">
+        <div class="row g-10 m-0 flex-nowrap">
+            <div class="col">
+                <p class="border border-info border-3 rounded-pill tasklist">
+                    Pomysły
+                </p>
+            </div>
+            <div class="col">
+                <p class="border border-info border-3 rounded-pill tasklist">
+                    Do Zrobienia
+                </p>
+            </div>
+            <div class="col">
+                <p class="border border-info border-3 rounded-pill tasklist">
+                    W Trakcie
+                </p>
+            </div>
+            <div class="col">
+                <p class="border border-info border-3 rounded-pill tasklist">
+                    Testowanie
+                </p>
+            </div>
+            <div class="col">
+                <p class="border border-info border-3 rounded-pill tasklist">
+                    Ukończone
+                </p>
+            </div>
+        </div>
+    </div>
     <script>require('popper.js');</script>
     <script>require('bootstrap');</script>
+    <script>require('./table.js');</script>
 </body>
 </html>

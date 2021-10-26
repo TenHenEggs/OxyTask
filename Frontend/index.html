@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./scrollbar.css">
 </head>
-<body class="bg-dark">
+<body class="bg-dark d-flex flex-column h-100">
     <div class="container-fluid text-center text-white mb-3">
         <div class="row">
             <div class="col-9 border border-3 border-primary p-2">
-                Twoje tablice
+                <p class="m-0">
+                    Twoje tablice
+                </p>
             </div>
             <div class="col-3 text-success p-0">
                 <button id="new" type="button" class="btn btn-outline-success h-100 w-100 rounded-0" data-bs-toggle="modal" data-bs-target="#tableCreationModal">
@@ -18,8 +21,7 @@
             </div>
         </div>
     </div>
-    </div>
-    <div class="container-fluid">
+    <div class="container-fluid overflow-auto">
         <div id="tables" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-10 gy-4 p-3">
         </div>
     </div>
@@ -57,6 +59,6 @@
     </div>
     <script>require('popper.js');</script>
     <script>require('bootstrap');</script>
-    <script>require('./index.js')</script>
+    <script>require('./index.js');</script>
 </body>
 </html>
