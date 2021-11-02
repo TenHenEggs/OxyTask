@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../scrollbar.css">
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body class="bg-dark h-100 text-white overflow-hidden user-select-none">
+    <div class="d-none" id="wrapper"></div>
+    <div class="d-none border" id="placeholder"></div>
+    <div class="fluid-container h-100 d-flex flex-column">
+        <div class="row g-1 m-0 mb-3">
+            <div class="col-1 barbutton">
+                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="back">
+                    <img class="mh-100 mw-100" src="back.png">
+                </button>
+            </div>
+            <div class="col align-self-center">
+                <p class="text-center mb-0 fs-1 fw-bold user-select-none">
+                    Nazwa Tablicy
+                </p>
+            </div>
+            <div class="col-1 barbutton">
+                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="menuButton">
+                    <img class="mh-100 mw-100" src="menu.png">
+                </button>
+            </div>
+        </div>
+        <div class="row m-0 overflow-auto">
+            <div class="col h-100" id="lists">
+                <div class="fluid-container bg-dark text-center fs-5 fw-bold overflow-auto h-100">
+                    <div class="row g-10 m-0 h-100 flex-nowrap">
+                        <div class="col h-100 d-flex flex-column">
+                            <p class="border border-info border-3 rounded-pill tasklist">
+                                Pomysły
+                            </p>
+                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_0"></div>
+                        </div>
+                        <div class="col h-100 d-flex flex-column">
+                            <p class="border border-info border-3 rounded-pill tasklist">
+                                Do Zrobienia
+                            </p>
+                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_1"></div>
+                        </div>
+                        <div class="col h-100 d-flex flex-column">
+                            <p class="border border-info border-3 rounded-pill tasklist">
+                                W Trakcie
+                            </p>
+                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_2"></div>
+                        </div>
+                        <div class="col h-100 d-flex flex-column">
+                            <p class="border border-info border-3 rounded-pill tasklist">
+                                Testowanie
+                            </p>
+                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_3"></div>
+                        </div>
+                        <div class="col h-100 d-flex flex-column">
+                            <p class="border border-info border-3 rounded-pill tasklist">
+                                Ukończone
+                            </p>
+                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col border-top border-start border-3 border-info d-none" id="menu">
+                <div class="row row-cols-1">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
+                        Utwórz zadanie
+                    </button>
+                </div>
+            </div>
+            <div class="col border-top border-start border-3 border-info d-none" id="taskMenu">
+                <div class="row row-cols-1">
+                    <button type="button" class="btn btn-outline-failure" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
+                        Utwórz zadanie
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="taskCreationModal" tabindex="-1"><div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Tworzenie zadania</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="modalNewTask">
+                        <input type="text" class="flow-control w-100 mb-3" name="name" placeholder="Nazwa zadania">
+                        <input type="text" class="flow-control w-100 mb-3" name="description" placeholder="Opis zadania"></textarea>
+                        <div class="input-group w-100">
+                            <span class="input-group-text">Termin</span>
+                            <input type="date" class="flow-control flex-grow-1" name="deadline">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalTaskCreationButton">
+                        Utwórz
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>require('popper.js');</script>
+    <script>require('bootstrap');</script>
+    <script>require('./index.js');</script>
+</body>
+</html>

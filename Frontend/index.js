@@ -4,7 +4,7 @@ let tables = [];
 
 function openTable(id) {
     sessionStorage.tableId = id;
-    location.href = 'table.html';
+    location.href = 'table/index.html';
 }
 
 function setupModal(table) {
@@ -15,13 +15,13 @@ function setupModal(table) {
 function addTableButton(table) {
     let tableButton = document.createElement('button');
     tableButton.type = 'button';
-    tableButton.classList = 'btn btn-outline-light p-3 text-center w-100';
+    tableButton.classList = 'btn btn-outline-light p-3 text-center w-100 overflow-hidden';
     tableButton.onclick = () => openTable(table.id);
     tableButton.innerHTML = table.name;
 
     let buttonCol = document.createElement('div');
     buttonCol.classList = 'col';
-    buttonCol.appendChild(tableButton);
+    buttonCol.append(tableButton);
 
     let deleteButton = document.createElement('button');
     deleteButton.type = 'button';
@@ -33,27 +33,35 @@ function addTableButton(table) {
 
     let deleteCol = document.createElement('div');
     deleteCol.classList = 'col-1 d-none';
-    deleteCol.appendChild(deleteButton);
+    deleteCol.append(deleteButton);
 
     let row = document.createElement('div');
     row.classList = 'row w-100 g-0';
-    row.onmouseenter = () => {row.lastChild.classList.remove('d-none');};
-    row.onmouseleave = () => {row.lastChild.classList.add('d-none');};
-    row.appendChild(buttonCol);
-    row.appendChild(deleteCol);
+    row.onmouseenter = () => {
+        row.firstElementChild.classList.remove('col');
+        row.firstElementChild.classList.add('col-11');
+        row.lastElementChild.classList.remove('d-none');
+    };
+    row.onmouseleave = () => {
+        row.firstElementChild.classList.remove('col-11');
+        row.firstElementChild.classList.add('col');
+        row.lastElementChild.classList.add('d-none');
+    };
+    row.append(buttonCol);
+    row.append(deleteCol);
 
     let finalCol = document.createElement('div');
     finalCol.id = 'table_' + table.id;
     finalCol.classList = 'col';
-    finalCol.appendChild(row);
+    finalCol.append(row);
 
-    document.getElementById('tables').appendChild(finalCol);
+    document.getElementById('tables').append(finalCol);
 }
 
 function fetchTables() {
     utilities.request('/api/tables', 'GET').then(res => {
         tables = res;
-        res.forEach(addTableButton);
+        tables.forEach(addTableButton);
     }).catch(err => console.log(err));
 }
 
@@ -65,15 +73,15 @@ function deleteTable(id) {
 
 function createTable() {
     let table = {};
-    table.name = document.getElementById('modalNewTableName').value;
+    table.name = document.modalNewTable.tableName.value;
     utilities.request('/api/tables', 'POST', {
         'name': table.name
     }).then(res => {
-        if(res.id == undefined) throw new Error('Invalid response from server');
+        if (res.id === undefined) throw new Error('Invalid response from server');
         table.id = res.id;
         addTableButton(table);
     }).catch(err => console.log(err));
-    document.getElementById('modalNewTableName').value = '';
+    document.modalNewTable.reset();
 }
 
 fetchTables();

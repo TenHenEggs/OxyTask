@@ -9,7 +9,7 @@ function request(uri, method, body) {
         },
         body: JSON.stringify(body)
     }).then(res => {
-        if(res.status != 200) throw new Error('Request failed with code ' + res.status);
+        if (res.status !== 200) throw new Error('Request failed with code ' + res.status);
         return res.json();
     });
 }
