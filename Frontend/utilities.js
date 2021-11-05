@@ -9,11 +9,16 @@ function request(uri, method, body) {
         },
         body: JSON.stringify(body)
     }).then(res => {
-        if (res.status !== 200) throw new Error('Request failed with code ' + res.status);
+        if (res.status !== 200 && res.status !== 201 && res.status !== 202) throw new Error('Request failed with code ' + res.status);
         return res.json();
     });
 }
 
+function deleteTable(id) {
+    return request('/api/tables/' + id, 'DELETE');
+}
+
 module.exports = {
-    request: request
+    request: request,
+    deleteTable: deleteTable
 }

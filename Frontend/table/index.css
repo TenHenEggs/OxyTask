@@ -1,3 +1,7 @@
+img {
+    -webkit-user-drag: none;
+}
+
 .tasklist {
     min-width: 250px;
 }
@@ -6,15 +10,15 @@
     max-width: 75px;
 }
 
-#wrapper {
-    position: absolute;
-}
-
-img {
-    -webkit-user-drag: none;
-}
-
 .list::-webkit-scrollbar {
     width: .2rem;
     height: .5rem;
+}
+
+.progress {
+    height: 5px;
+}
+
+#wrapper {
+    position: absolute;
 }

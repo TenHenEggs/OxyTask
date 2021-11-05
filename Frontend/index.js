@@ -1,88 +1,93 @@
 const utilities = require('./utilities.js');
 
-let tables = [];
+const elements = {
+    'modalCreationButton': document.getElementById('modalCreationButton'),
+    'modalDeletionButton': document.getElementById('modalDeletionButton'),
+    'modalTableName': document.getElementById('modalTableName'),
+    'modalTitle': document.getElementById('modalTitle'),
+    'prototype': document.getElementById('prototype'),
+    'tables': document.getElementById('tables')
+};
 
-function openTable(id) {
-    sessionStorage.tableId = id;
-    location.href = 'table/index.html';
+const tables = [];
+
+class Table {
+    constructor(name, id) {
+        this.name = name;
+        this.id = id;
+        this.generateElement();
+        elements['tables'].append(this.element);
+        tables.push(this);
+    }
+
+    generateElement() {
+        const div = elements['prototype'].children[0].cloneNode(true);
+        const row = div.children[0];
+        const button = row.children[0].children[0];
+        button.onclick = () => this.open();
+        button.innerHTML = this.name;
+        const deleteCol = row.children[1];
+        deleteCol.children[0].onclick = () => this.setupModalForDeletion();
+        row.onmouseenter = () => {
+            deleteCol.classList.remove('d-none');
+            button.classList.add('rounded-0');
+        };
+        row.onmouseleave = () => {
+            deleteCol.classList.add('d-none');
+            button.classList.remove('rounded-0');
+        };
+        this.element = div;
+    }
+
+    open() {
+        this.element = undefined;
+        sessionStorage.setItem('table', JSON.stringify(this));
+        location.href = 'table/index.html';
+    }
+
+    setupModalForDeletion() {
+        elements['modalTitle'].innerHTML = 'Usuwanie tablicy';
+        elements['modalTableName'].innerHTML = this.name;
+        elements['modalTableName'].parentElement.classList.remove('d-none');
+        elements['modalCreationButton'].classList.add('d-none');
+        elements['modalDeletionButton'].classList.remove('d-none');
+        elements['modalDeletionButton'].onclick = () => this.delete();
+        document.modal.classList.add('d-none');
+    }
+
+    delete() {
+        utilities.deleteTable(this.id).then(() => {
+            elements['tables'].removeChild(this.element);
+            tables.splice(tables.findIndex(table => table.id === this.id), 1);
+        }).catch(err => console.log(err));
+    }
 }
 
-function setupModal(table) {
-    document.getElementById('modalTableName').innerHTML = table.name;
-    document.getElementById('modalDeleteButton').onclick = () => deleteTable(table.id);
-}
-
-function addTableButton(table) {
-    let tableButton = document.createElement('button');
-    tableButton.type = 'button';
-    tableButton.classList = 'btn btn-outline-light p-3 text-center w-100 overflow-hidden';
-    tableButton.onclick = () => openTable(table.id);
-    tableButton.innerHTML = table.name;
-
-    let buttonCol = document.createElement('div');
-    buttonCol.classList = 'col';
-    buttonCol.append(tableButton);
-
-    let deleteButton = document.createElement('button');
-    deleteButton.type = 'button';
-    deleteButton.classList = 'btn btn-outline-danger w-100 h-100 p-0';
-    deleteButton.setAttribute('data-bs-toggle', 'modal');
-    deleteButton.setAttribute('data-bs-target', '#tableDeletionModal');
-    deleteButton.onclick = () => setupModal(table);
-    deleteButton.innerHTML = 'x';
-
-    let deleteCol = document.createElement('div');
-    deleteCol.classList = 'col-1 d-none';
-    deleteCol.append(deleteButton);
-
-    let row = document.createElement('div');
-    row.classList = 'row w-100 g-0';
-    row.onmouseenter = () => {
-        row.firstElementChild.classList.remove('col');
-        row.firstElementChild.classList.add('col-11');
-        row.lastElementChild.classList.remove('d-none');
-    };
-    row.onmouseleave = () => {
-        row.firstElementChild.classList.remove('col-11');
-        row.firstElementChild.classList.add('col');
-        row.lastElementChild.classList.add('d-none');
-    };
-    row.append(buttonCol);
-    row.append(deleteCol);
-
-    let finalCol = document.createElement('div');
-    finalCol.id = 'table_' + table.id;
-    finalCol.classList = 'col';
-    finalCol.append(row);
-
-    document.getElementById('tables').append(finalCol);
-}
-
-function fetchTables() {
-    utilities.request('/api/tables', 'GET').then(res => {
-        tables = res;
-        tables.forEach(addTableButton);
-    }).catch(err => console.log(err));
-}
-
-function deleteTable(id) {
-    utilities.request('/api/tables/' + id, 'DELETE').then(() => {
-        document.getElementById('tables').removeChild(document.getElementById('table_' + id));
-    }).catch(err => console.log(err));
+function setupModalForCreation() {
+    elements['modalTitle'].innerHTML = 'Tworzenie tablicy';
+    elements['modalTableName'].parentElement.classList.add('d-none');
+    elements['modalDeletionButton'].classList.add('d-none');
+    elements['modalCreationButton'].classList.remove('d-none');
+    document.modal.tableName.focus();
+    document.modal.classList.remove('d-none');
+    document.modal.reset();
 }
 
 function createTable() {
-    let table = {};
-    table.name = document.modalNewTable.tableName.value;
+    tableName = document.modal.tableName.value;
     utilities.request('/api/tables', 'POST', {
-        'name': table.name
-    }).then(res => {
-        if (res.id === undefined) throw new Error('Invalid response from server');
-        table.id = res.id;
-        addTableButton(table);
-    }).catch(err => console.log(err));
-    document.modalNewTable.reset();
+            'name': tableName
+        })
+        .then(res => tables.push(new Table(tableName, res.id)))
+        .catch(err => console.log(err));
+}
+
+function fetchTables() {
+    utilities.request('/api/tables', 'GET')
+        .then(res => res.forEach(table => new Table(table.name, table.id)))
+        .catch(err => console.log(err));
 }
 
 fetchTables();
-document.getElementById('modalCreationButton').onclick = () => createTable();
+elements['modalCreationButton'].onclick = () => createTable();
+document.getElementById('new').onclick = () => setupModalForCreation();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl" class="h-100">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <link rel="stylesheet" href="../scrollbar.css">
     <link rel="stylesheet" href="./index.css">
 </head>
-<body class="bg-dark h-100 text-white overflow-hidden user-select-none">
+
+<body class="bg-dark h-100 text-light overflow-hidden user-select-none">
     <div class="d-none" id="wrapper"></div>
     <div class="d-none border" id="placeholder"></div>
     <div class="fluid-container h-100 d-flex flex-column">
@@ -18,9 +20,7 @@
                 </button>
             </div>
             <div class="col align-self-center">
-                <p class="text-center mb-0 fs-1 fw-bold user-select-none">
-                    Nazwa Tablicy
-                </p>
+                <p class="text-center mb-0 fs-1 fw-bold user-select-none" id="tableName"></p>
             </div>
             <div class="col-1 barbutton">
                 <button type="button" class="btn btn-primary w-100 h-100 p-1" id="menuButton">
@@ -28,7 +28,7 @@
                 </button>
             </div>
         </div>
-        <div class="row m-0 overflow-auto">
+        <div class="row m-0 flex-grow-1 flex-nowrap overflow-auto">
             <div class="col h-100" id="lists">
                 <div class="fluid-container bg-dark text-center fs-5 fw-bold overflow-auto h-100">
                     <div class="row g-10 m-0 h-100 flex-nowrap">
@@ -65,23 +65,72 @@
                     </div>
                 </div>
             </div>
-            <div class="col border-top border-start border-3 border-info d-none" id="menu">
+            <div class="col border-top border-start border-3 border-info d-none h-100 overflow-auto" id="menu">
                 <div class="row row-cols-1">
-                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
+                    <button type="button" class="btn btn-outline-danger rounded-0" data-bs-toggle="modal" data-bs-target="#tableDeletionModal">
+                        Usuń tablicę
+                    </button>
+                    <button type="button" class="btn btn-outline-success rounded-0" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
                         Utwórz zadanie
                     </button>
                 </div>
             </div>
-            <div class="col border-top border-start border-3 border-info d-none" id="taskMenu">
+            <div class="col border-top border-start border-3 border-info d-none h-100 overflow-auto" id="taskMenu">
                 <div class="row row-cols-1">
-                    <button type="button" class="btn btn-outline-failure" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
-                        Utwórz zadanie
+                    <form class="p-0" name="taskModification">
+                        <input type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0 text-wrap fs-5 text-center" name="name">
+                        <textarea rows="4" type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="description"></textarea>
+                        <div class="input-group">
+                            <span class="p-2 input-group-text p-0 bg-dark text-light rounded-0">
+                                Termin:
+                            </span>
+                            <input type='date' class="form-control bg-dark text-light rounded-0" name="deadline">
+                        </div>
+                        <div class="row row-cols-1 m-0" id="subtasks"></div>
+                        <div id="addSub">
+                            <div class="input-group p-0">
+                                <button type="button" class="btn btn-outline-success rounded-0" id="addSubButton">
+                                    Dodaj
+                                </button>
+                                <input type="text" placeholder="Nazwa podzadania" class="form-control bg-dark text-light rounded-0" name="newSubName">
+                            </div>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-outline-warning rounded-0" id="modifyTask"></button>
+                    <button type="button" class="btn btn-outline-secondary rounded-0" id="cancelModification">
+                        Anuluj zmiany
+                    </button>
+                    <button type="button" class="btn btn-outline-danger rounded-0" data-bs-toggle="modal" data-bs-target="#taskDeletionModal" id="deleteTask">
+                        Usuń zadanie
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal" id="taskCreationModal" tabindex="-1"><div class="modal-dialog">
+
+    <div class="modal" id="tableDeletionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Usuwanie tablicy</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć tablicę <span id="modalTableName" class="text-info"></span>? Operacji tej nie można cofnąć!
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalTableDeletionButton">
+                        Usuń
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="taskCreationModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content bg-dark text-light">
                 <div class="modal-header border-secondary">
                     <h5 class="modal-title">Tworzenie zadania</h5>
@@ -89,11 +138,11 @@
                 </div>
                 <div class="modal-body">
                     <form name="modalNewTask">
-                        <input type="text" class="flow-control w-100 mb-3" name="name" placeholder="Nazwa zadania">
-                        <input type="text" class="flow-control w-100 mb-3" name="description" placeholder="Opis zadania"></textarea>
+                        <input type="text" class="form-control w-100 mb-3 bg-dark text-light" name="name" placeholder="Nazwa zadania">
+                        <input type="text" class="form-control w-100 mb-3 bg-dark text-light" name="description" placeholder="Opis zadania">
                         <div class="input-group w-100">
-                            <span class="input-group-text">Termin</span>
-                            <input type="date" class="flow-control flex-grow-1" name="deadline">
+                            <span class="input-group-text bg-dark text-light">Termin</span>
+                            <input type="date" class="form-control flex-grow-1 bg-dark text-light" name="deadline">
                         </div>
                     </form>
                 </div>
@@ -108,8 +157,54 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="taskDeletionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Usuwanie zadania</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć zadanie <span id="modalTaskName" class="text-info"></span>? Operacji tej nie można cofnąć!
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalTaskDeletionButton">
+                        Usuń
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-none" id="subPrototype">
+        <div class="input-group p-0">
+            <div class="input-group-text bg-dark rounded-0">
+                <input type="checkbox" class="border mt-0 form-check-input bg-dark text-light">
+            </div>
+            <button type="button" class="btn btn-outline-danger rounded-0">x</button>
+            <input type="text" class="form-control bg-dark text-light rounded-0">
+        </div>
+    </div>
+    <div class="d-none" id="taskPrototype">
+        <div>
+            <button class="btn border-3 h-100 w-100 fw-bold fs-6 p-1 overflow-hidden bg-dark">
+                <p class="m-0">
+                    <span></span>
+                    <span class="text-secondary opacity-50"></span>
+                </p>
+                <div class="progress m-2 d-none">
+                    <div class="progress-bar"></div>
+                </div>
+            </button>
+        </div>
+    </div>
+
     <script>require('popper.js');</script>
     <script>require('bootstrap');</script>
     <script>require('./index.js');</script>
 </body>
+
 </html>

@@ -1,5 +1,5 @@
-let wrapper = document.getElementById('wrapper');
-let placeholder = document.getElementById('placeholder');
+const wrapper = document.getElementById('wrapper');
+const placeholder = document.getElementById('placeholder');
 
 let offset = undefined;
 let scrollTimer = {
@@ -12,7 +12,7 @@ let scrollAmount = {
 };
 const SCROLL_SPEED = 0.07;
 
-let xScrollElement = document.getElementById('lists').firstElementChild;
+const xScrollElement = document.getElementById('lists').children[0];
 let xRect;
 let xCenter;
 let xPivot;
@@ -58,9 +58,11 @@ function xScrolling(pos) {
 
         if (scrollTimer.x === undefined)
             scrollTimer.x = setInterval(() => {
+                const scroll = xScrollElement.scrollLeft;
                 xScrollElement.scrollBy(scrollAmount.x, 0);
-                listRect.left += scrollAmount.x;
-                listCenter += scrollAmount.x;
+                const diff = xScrollElement.scrollLeft - scroll;
+                listRect.left += diff;
+                listCenter += diff;
             }, 10);
     } else if (scrollTimer.x !== undefined) {
         clearInterval(scrollTimer.x);
@@ -172,13 +174,13 @@ function drag(e) {
 }
 
 function startDrag(task) {
-    let div = task.htmlElement;
-    let taskButton = div.firstElementChild;
+    const div = task.element;
+    const taskButton = div.children[0];
     const rect = taskButton.getBoundingClientRect();
 
     wrapper.onmouseup = () => stopDrag(task);
     wrapper.append(taskButton.cloneNode(true));
-    wrapper.firstElementChild.setAttribute('disabled', '');
+    wrapper.children[0].setAttribute('disabled', '');
 
     wrapper.style.left = rect.left + 'px';
     wrapper.style.top = rect.top + 'px';
@@ -209,7 +211,7 @@ function stopDrag(task) {
     wrapper.innerHTML = '';
     wrapper.classList.add('d-none');
 
-    let div = task.htmlElement;
+    const div = task.element;
     task.list = currentList;
 
     placeholder.classList.add('d-none');
@@ -227,7 +229,7 @@ function stopDrag(task) {
 }
 
 module.exports.registerTask = function(task) {
-    let div = task.htmlElement;
+    const div = task.element;
     div.onmousedown = () => div.onmousemove = () => startDrag(task);
     div.onmouseup = () => div.onmousemove = undefined;
     div.onmouseleave = () => div.onmousemove = undefined;

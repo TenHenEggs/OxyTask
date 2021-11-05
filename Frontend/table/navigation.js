@@ -1,61 +1,48 @@
-let menu = document.getElementById('menu');
-let taskMenu = document.getElementById('taskMenu');
-let lists = document.getElementById('lists');
-let menuButton = document.getElementById('menuButton');
+const menu = require('./menu.js');
+
+const elements = {
+    'lists': document.getElementById('lists'),
+    'menu': document.getElementById('menu'),
+    'taskMenu': document.getElementById('taskMenu')
+};
 
 let visibleMenu = 'none';
 
+function toggleMenu() {
+    if (visibleMenu === 'menu') {
+        elements['menu'].classList.add('d-none');
+        elements['lists'].classList = 'h-100 col';
+        visibleMenu = 'none';
+    } else {
+        elements['menu'].classList.remove('d-none');
+        elements['lists'].classList = 'h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10';
+        elements['taskMenu'].classList.add('d-none');
+        visibleMenu = 'menu';
+    }
+}
+
+function toggleTaskMenu(task) {
+    if (visibleMenu === task.id) {
+        elements['taskMenu'].classList.add('d-none');
+        elements['lists'].classList = 'h-100 col';
+        visibleMenu = 'none';
+    } else {
+        elements['taskMenu'].classList.remove('d-none');
+        elements['lists'].classList = 'h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10';
+        elements['menu'].classList.add('d-none');
+        visibleMenu = task.id;
+        menu.setup(task);
+    }
+}
+
 function goBack() {
-    sessionStorage.tableId = undefined;
+    sessionStorage.removeItem('table');
     location.href = '../index.html';
 }
 
-function toggleMenu() {
-    if (visibleMenu === 'none') {
-        menu.classList.remove('d-none');
-        lists.classList = 'h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10';
-        visibleMenu = 'menu';
-    } else if (visibleMenu === 'menu') {
-        menu.classList.add('d-none');
-        lists.classList = 'h-100 col';
-        visibleMenu = 'none';
-    } else {
-        taskMenu.classList.add('d-none');
-        menu.classList.remove('d-none');
-        visibleMenu = 'menu';
-    }
-}
-
-function setupMenu(id, callback) {
-    taskMenu.innerHTML = '';
-    callback(id);
-}
-
-function toggleTaskMenu(id, callback) {
-    if (visibleMenu === 'none') {
-        setupMenu(id, callback);
-        taskMenu.classList.remove('d-none');
-        lists.classList = 'h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10';
-        visibleMenu = id;
-    } else if (visibleMenu === id) {
-        taskMenu.classList.add('d-none');
-        lists.classList = 'h-100 col';
-        visibleMenu = 'none';
-    } else if (visibleMenu === 'menu') {
-        setupMenu(id, callback);
-        menu.classList.add('d-none');
-        taskMenu.classList.remove('d-none');
-        visibleMenu = id;
-    } else {
-        setupMenu(id, callback);
-        visibleMenu = id;
-    }
-}
-
-menuButton.onclick = () => toggleMenu();
 document.getElementById('back').onclick = () => goBack();
+document.getElementById('menuButton').onclick = () => toggleMenu();
 
-module.exports.registerTask = function(task, callback) {
-    let button = task.htmlElement.firstElementChild;
-    button.onclick = () => toggleTaskMenu(task.id, callback);
+module.exports.registerTask = function(task) {
+    task.element.children[0].onclick = () => toggleTaskMenu(task);
 }
