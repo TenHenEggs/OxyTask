@@ -22,7 +22,7 @@ function toggleMenu() {
 }
 
 function toggleTaskMenu(task) {
-    if (visibleMenu === task.id) {
+    if (visibleMenu.id === task.id) {
         elements['taskMenu'].classList.add('d-none');
         elements['lists'].classList = 'h-100 col';
         visibleMenu = 'none';
@@ -30,7 +30,7 @@ function toggleTaskMenu(task) {
         elements['taskMenu'].classList.remove('d-none');
         elements['lists'].classList = 'h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10';
         elements['menu'].classList.add('d-none');
-        visibleMenu = task.id;
+        visibleMenu = task;
         menu.setup(task);
     }
 }
@@ -45,4 +45,8 @@ document.getElementById('menuButton').onclick = () => toggleMenu();
 
 module.exports.registerTask = function(task) {
     task.element.children[0].onclick = () => toggleTaskMenu(task);
+}
+
+module.exports.setup = function(taskArray) {
+    menu.setTaskArray(taskArray);
 }

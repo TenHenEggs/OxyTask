@@ -2,6 +2,8 @@ const wrapper = document.getElementById('wrapper');
 const placeholder = document.getElementById('placeholder');
 const listsContainer = document.getElementById('lists').children[0];
 
+let update;
+
 const lists = [
     document.getElementById('list_0'),
     document.getElementById('list_1'),
@@ -218,6 +220,7 @@ function stopDrag(task) {
 
     window.onmouseup = undefined;
     window.onmousemove = undefined;
+    update();
 }
 
 module.exports.registerTask = function(task) {
@@ -225,4 +228,8 @@ module.exports.registerTask = function(task) {
     div.onmousedown = () => div.onmousemove = (e) => startDrag(task, e);
     div.onmouseup = () => div.onmousemove = undefined;
     div.onmouseleave = () => div.onmousemove = undefined;
+}
+
+module.exports.setup = function(updateFun) {
+    update = updateFun;
 }

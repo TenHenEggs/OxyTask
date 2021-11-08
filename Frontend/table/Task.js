@@ -7,6 +7,7 @@ let idTask = 0;
 const elements = {
     'list_0': document.getElementById('list_0'),
     'taskPrototype': document.getElementById('taskPrototype'),
+    'taskSearchPrototype': document.getElementById('taskSearchPrototype')
 }
 
 const tasks = [];
@@ -20,7 +21,11 @@ class Task {
         this.deadline = deadline;
         this.list = 0;
         this.subs = [];
+        this.deps = [];
+
         this.generateElement();
+        this.generateSearchElement();
+        this.update();
 
         elements['list_0'].prepend(this.element);
         tasks.push(this);
@@ -43,10 +48,28 @@ class Task {
         if (deadline < today) return 'danger';
     }
 
+    getListBasedColor() {
+        switch (this.list) {
+            case 0:
+                return 'secondary';
+            case 1:
+                return 'danger';
+            case 2:
+            case 3:
+                return 'warning';
+            case 4:
+                return 'success';
+        }
+    }
+
     generateElement() {
         this.element = elements['taskPrototype'].children[0].cloneNode(true);
         this.element.children[0].children[0].children[1].innerHTML = '#' + this.id;
-        this.update();
+    }
+
+    generateSearchElement() {
+        this.searchElement = elements['taskSearchPrototype'].children[0].cloneNode(true);
+        this.searchElement.innerHTML = this.name + '#' + this.id;
     }
 
     update() {
@@ -67,6 +90,10 @@ class Task {
             progress.children[0].style.width = (current / max * 100) + '%';
             progress.children[0].classList = 'progress-bar bg-' + color;
         }
+        this.deps.forEach(dep => {
+            if (dep.list !== 4) button.classList.add('opacity-50');
+        });
+        this.searchElement.innerHTML = this.name + '#' + this.id;
     }
 
     delete() {
@@ -75,4 +102,10 @@ class Task {
     }
 }
 
+function updateState() {
+    tasks.forEach(task => task.update());
+}
+
+navigation.setup(tasks);
+dragLogic.setup(updateState);
 module.exports = Task;

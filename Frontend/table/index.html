@@ -86,6 +86,9 @@
                             </span>
                             <input type='date' class="form-control bg-dark text-light rounded-0" name="deadline">
                         </div>
+                        <p id="subLabel" class="m-0 p-2 fs-4 text-center">
+                            Podzadania
+                        </p>
                         <div class="row row-cols-1 m-0" id="subtasks"></div>
                         <div id="addSub">
                             <div class="input-group p-0">
@@ -95,6 +98,12 @@
                                 <input type="text" placeholder="Nazwa podzadania" class="form-control bg-dark text-light rounded-0" name="newSubName">
                             </div>
                         </div>
+                        <p id="depLabel" class="m-0 p-2 fs-4 text-center">
+                            Zależności
+                        </p>
+                        <div class="row row-cols-1 m-0" id="deptasks"></div>
+                        <input type="text" placeholder="Nazwa zadania" id="taskSearch" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="taskSearch">
+                        <div id="taskSearchList" class="list-group rounded-0"></div>
                     </form>
                     <button type="button" class="btn btn-outline-warning rounded-0" id="modifyTask"></button>
                     <button type="button" class="btn btn-outline-secondary rounded-0" id="cancelModification">
@@ -181,9 +190,9 @@
 
     <div class="d-none" id="subPrototype">
         <div class="input-group p-0">
-            <div class="input-group-text bg-dark rounded-0">
+            <span class="input-group-text bg-dark rounded-0">
                 <input type="checkbox" class="border mt-0 form-check-input bg-dark text-light">
-            </div>
+            </span>
             <button type="button" class="btn btn-outline-danger rounded-0">x</button>
             <input type="text" class="form-control bg-dark text-light rounded-0">
         </div>
@@ -199,6 +208,15 @@
                     <div class="progress-bar"></div>
                 </div>
             </button>
+        </div>
+    </div>
+    <div class="d-none" id="taskSearchPrototype">
+        <button type="button" class="list-group-item bg-dark text-start text-light border-light"></button>
+    </div>
+    <div class="d-none" id="depPrototype">
+        <div class="input-group p-0">
+            <button type="button" class="btn btn-outline-danger rounded-0">x</button>
+            <span class="input-group-text bg-dark rounded-0 flex-grow-1"></span>
         </div>
     </div>
 
