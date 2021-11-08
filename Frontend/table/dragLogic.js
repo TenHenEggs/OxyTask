@@ -1,34 +1,6 @@
 const wrapper = document.getElementById('wrapper');
 const placeholder = document.getElementById('placeholder');
-
-let offset = undefined;
-let scrollTimer = {
-    x: undefined,
-    y: undefined
-};
-let scrollAmount = {
-    x: 0,
-    y: 0
-};
-const SCROLL_SPEED = 0.07;
-
-const xScrollElement = document.getElementById('lists').children[0];
-let xRect;
-let xCenter;
-let xPivot;
-
-let currentList;
-let listRect;
-let listSpacing;
-let listCenter;
-
-let yScrollElement;
-let yRect;
-let yCenter;
-let yPivot;
-
-let list;
-let maxIndex;
+const listsContainer = document.getElementById('lists').children[0];
 
 const lists = [
     document.getElementById('list_0'),
@@ -38,176 +10,195 @@ const lists = [
     document.getElementById('list_4')
 ];
 
-function refreshList() {
-    list = lists[currentList];
-    listRect = list.getBoundingClientRect();
-    listCenter = listRect.left + listRect.width / 2;
-    maxIndex = list.children.length - 1;
+const scrollTimer = {};
+const scrollAmount = {};
+const scrollBounds = {
+    center: {},
+    pivot: {},
+};
+const SCROLL_SPEED = 0.07;
 
-    yScrollElement = list;
-    yRect = listRect;
-    yCenter = yRect.top + yRect.height / 2;
-    yPivot = yRect.height * SCROLL_SPEED * 0.2;
+let listSpacing;
+let listCenter;
+let listElement;
+let currentList;
+
+const wrapperRect = {};
+const wrapperMid = {};
+const mousePos = {};
+
+let listCenterOffset;
+let placeholderTop;
+
+let currentIndex;
+let maxIndex;
+
+function mapPos(element, from) {
+    element.style.left = from.left + 'px';
+    element.style.top = from.top + 'px';
 }
 
-function xScrolling(pos) {
-    scrollAmount.x = (pos.x - xCenter) * SCROLL_SPEED;
-    if (Math.abs(scrollAmount.x) > xPivot) {
-        if (scrollAmount.x < 0) scrollAmount.x += xPivot;
-        else scrollAmount.x -= xPivot;
+function mapSize(element, from) {
+    element.style.width = from.width + 'px';
+    element.style.height = from.height + 'px';
+}
 
-        if (scrollTimer.x === undefined)
-            scrollTimer.x = setInterval(() => {
-                const scroll = xScrollElement.scrollLeft;
-                xScrollElement.scrollBy(scrollAmount.x, 0);
-                const diff = xScrollElement.scrollLeft - scroll;
-                listRect.left += diff;
-                listCenter += diff;
-            }, 10);
-    } else if (scrollTimer.x !== undefined) {
-        clearInterval(scrollTimer.x);
-        scrollTimer.x = undefined;
-        scrollAmount.x = 0;
+function setMousePos(e) {
+    mousePos.x = e.clientX;
+    mousePos.y = e.clientY;
+}
+
+function copySizePos(from, to) {
+    to.left = from.left;
+    to.top = from.top;
+    to.width = from.width;
+    to.height = from.height;
+}
+
+function changeList(newList) {
+    clearInterval(scrollTimer.y);
+    scrollTimer.y = undefined;
+    lists[currentList].removeChild(placeholder);
+    lists[newList].prepend(placeholder);
+    currentIndex = 0;
+    currentList = newList;
+    listElement = lists[currentList];
+    listCenter = listCenterOffset + (currentList * listSpacing) - listsContainer.scrollLeft;
+    maxIndex = listElement.children.length - 1;
+    const placeholderRect = placeholder.getBoundingClientRect();
+    placeholderTop = placeholderRect.top;
+}
+
+function scrolling(axis, fn) {
+    scrollAmount[axis] = (mousePos[axis] - scrollBounds.center[axis]) * SCROLL_SPEED;
+    if (Math.abs(scrollAmount[axis]) > scrollBounds.pivot[axis]) {
+        scrollAmount[axis] -= Math.sign(scrollAmount[axis]) * scrollBounds.pivot[axis];
+        if (scrollTimer[axis] === undefined)
+            scrollTimer[axis] = setInterval(() => fn(scrollAmount[axis]), 10);
+    } else if (scrollTimer[axis] !== undefined) {
+        clearInterval(scrollTimer[axis]);
+        scrollTimer[axis] = undefined;
+        scrollAmount[axis] = 0;
     }
 }
 
-function xPositioning(pos) {
+function xScrolling() {
+    scrolling('x', (amount) => {
+        listsContainer.scrollBy(amount, 0);
+        listCenter = listCenterOffset + (currentList * listSpacing) - listsContainer.scrollLeft;
+    });
+}
+
+function xPositioning() {
     let newList = currentList;
 
-    if (Math.abs(pos.x - listCenter) > listSpacing / 2) {
-        newList = currentList + Math.round((pos.x - listCenter) / listSpacing);
+    if (Math.abs(wrapperMid.x - listCenter) > listSpacing / 2) {
+        newList = currentList + Math.round((wrapperMid.x - listCenter) / listSpacing);
         newList = Math.min(4, Math.max(0, newList));
-    }
-
-    if (currentList !== newList) {
-        clearInterval(scrollTimer.y);
-        scrollTimer.y = undefined;
-        lists[currentList].removeChild(placeholder);
-        lists[newList].prepend(placeholder);
-        currentList = newList;
-        refreshList();
+        if (currentList !== newList) changeList(newList);
     }
 }
 
-function yScrolling(pos) {
-    scrollAmount.y = (pos.y - yCenter) * SCROLL_SPEED;
-    if (Math.abs(scrollAmount.y) > yPivot) {
-        if (scrollAmount.y < 0)
-            scrollAmount.y += yPivot;
-        else
-            scrollAmount.y -= yPivot;
-        if (scrollTimer.y === undefined)
-            scrollTimer.y = setInterval(() => yScrollElement.scrollBy(0, scrollAmount.y), 10);
-    } else if (scrollTimer.y !== undefined) {
-        clearInterval(scrollTimer.y);
-        scrollTimer.y = undefined;
-        scrollAmount.y = 0;
-    }
+function yScrolling() {
+    scrolling('y', (amount) => listElement.scrollBy(0, amount));
 }
 
-function yPositioning(pos) {
-    const currentIndex = Array.prototype.indexOf.call(list.children, placeholder);
+function yPositioning() {
     let newIndex = currentIndex;
 
-    const rect = placeholder.getBoundingClientRect();
-    let bottom = rect.top + rect.height;
-    let top = rect.top;
-
     while (newIndex > 0) {
-        const upperRect = list.children[newIndex - 1].getBoundingClientRect();
-        const top = upperRect.top;
-        const pivot = (bottom + top) / 2;
-        if (pos.y < pivot) {
+        const upperRect = listElement.children[newIndex - 1].getBoundingClientRect();
+        const upperTop = upperRect.top;
+        const pivot = (placeholderTop + wrapperRect.height + upperTop) / 2;
+        if (wrapperMid.y < pivot) {
             newIndex -= 1;
-            bottom = top + rect.height;
+            placeholderTop = upperTop;
         } else break;
     }
 
     while (newIndex < maxIndex) {
-        const lowerRect = list.children[newIndex + 1].getBoundingClientRect();
-        const bottom = lowerRect.top + lowerRect.height;
-        const pivot = (top + bottom) / 2;
-        if (pos.y > pivot) {
+        const lowerRect = listElement.children[newIndex + 1].getBoundingClientRect();
+        const lowerBottom = lowerRect.top + lowerRect.height;
+        const pivot = (placeholderTop + lowerBottom) / 2;
+        if (wrapperMid.y > pivot) {
             newIndex += 1;
-            top = bottom - rect.height;
+            placeholderTop = lowerBottom - wrapperRect.height;
         } else break;
     }
 
     if (currentIndex !== newIndex) {
-        list.removeChild(placeholder);
+        currentIndex = newIndex;
+        listElement.removeChild(placeholder);
         if (newIndex < maxIndex)
-            list.insertBefore(placeholder, list.children[newIndex]);
+            listElement.insertBefore(placeholder, listElement.children[newIndex]);
         else
-            list.append(placeholder);
+            listElement.append(placeholder);
     }
 }
 
-function initDrag(e, rect) {
-    offset = {};
-    offset.left = e.clientX - rect.left;
-    offset.top = e.clientY - rect.top;
-
-    offset.left = Math.max(offset.left, 1);
-    offset.top = Math.max(offset.top, 1);
-
-    offset.left = Math.min(offset.left, rect.width - 1);
-    offset.top = Math.min(offset.top, rect.height - 1);
-}
-
 function drag(e) {
-    const rect = wrapper.getBoundingClientRect();
+    const diff = {
+        x: e.clientX - mousePos.x,
+        y: e.clientY - mousePos.y
+    }
+    setMousePos(e);
 
-    if (offset === undefined) initDrag(e, rect);
+    wrapperRect.left += diff.x;
+    wrapperRect.top += diff.y;
+    wrapperMid.x += diff.x;
+    wrapperMid.y += diff.y;
+    mapPos(wrapper, wrapperRect);
 
-    wrapper.style.left = (e.clientX - offset.left) + 'px';
-    wrapper.style.top = (e.clientY - offset.top) + 'px';
-
-    const pos = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-    };
-
-    xScrolling(pos);
-    xPositioning(pos);
-    yScrolling(pos);
-    yPositioning(pos);
+    xScrolling();
+    xPositioning();
+    yScrolling();
+    yPositioning();
 }
 
-function startDrag(task) {
+function startDrag(task, e) {
     const div = task.element;
     const taskButton = div.children[0];
-    const rect = taskButton.getBoundingClientRect();
+    const buttonRect = taskButton.getBoundingClientRect();
 
-    wrapper.onmouseup = () => stopDrag(task);
+    copySizePos(buttonRect, wrapperRect);
+    mapPos(wrapper, wrapperRect);
+    mapSize(wrapper, wrapperRect);
+
     wrapper.append(taskButton.cloneNode(true));
     wrapper.children[0].setAttribute('disabled', '');
-
-    wrapper.style.left = rect.left + 'px';
-    wrapper.style.top = rect.top + 'px';
-    wrapper.style.width = rect.width + 'px';
-    wrapper.style.height = rect.height + 'px';
     wrapper.classList.remove('d-none');
 
-    placeholder.style.width = rect.width + 'px';
-    placeholder.style.height = rect.height + 'px';
+    mapSize(placeholder, wrapperRect);
     placeholder.classList.remove('d-none');
 
     div.onmousemove = undefined;
     div.classList.add('d-none');
     div.parentElement.replaceChild(placeholder, div);
 
-    xRect = xScrollElement.getBoundingClientRect();
-    xCenter = xRect.left + xRect.width / 2;
-    xPivot = xRect.width * SCROLL_SPEED * 0.4;
+    const xRect = listsContainer.getBoundingClientRect();
+    scrollBounds.center.x = xRect.left + xRect.width / 2;
+    scrollBounds.pivot.x = xRect.width * 0.4 * SCROLL_SPEED;
 
-    currentList = parseInt(placeholder.parentElement.id.substr(-1));
-    refreshList();
-    listSpacing = list.parentElement.getBoundingClientRect().width;
-    window.addEventListener('mousemove', drag);
+    const yRect = lists[0].parentElement.getBoundingClientRect();
+    scrollBounds.center.y = yRect.top + yRect.height / 2;
+    scrollBounds.pivot.y = yRect.height * 0.2 * SCROLL_SPEED;
+    listCenterOffset = yRect.left + yRect.width / 2 + listsContainer.scrollLeft;
+    listSpacing = yRect.width;
+
+    currentList = +placeholder.parentElement.id.slice(-1);
+    changeList(currentList);
+
+    currentIndex = [...listElement.children].indexOf(placeholder);
+    setMousePos(e);
+    wrapperMid.x = wrapperRect.left + wrapperRect.width / 2;
+    wrapperMid.y = wrapperRect.top + wrapperRect.height / 2;
+
+    window.onmouseup = () => stopDrag(task);
+    window.onmousemove = (e) => drag(e);
+    drag(e);
 }
 
 function stopDrag(task) {
-    wrapper.onmouseup = undefined;
     wrapper.innerHTML = '';
     wrapper.classList.add('d-none');
 
@@ -220,17 +211,18 @@ function stopDrag(task) {
     div.onmousemove = undefined;
     div.classList.remove('d-none');
 
-    offset = undefined;
     clearInterval(scrollTimer.x);
     clearInterval(scrollTimer.y);
     scrollTimer.x = undefined;
     scrollTimer.y = undefined;
-    window.removeEventListener('mousemove', drag);
+
+    window.onmouseup = undefined;
+    window.onmousemove = undefined;
 }
 
 module.exports.registerTask = function(task) {
     const div = task.element;
-    div.onmousedown = () => div.onmousemove = () => startDrag(task);
+    div.onmousedown = () => div.onmousemove = (e) => startDrag(task, e);
     div.onmouseup = () => div.onmousemove = undefined;
     div.onmouseleave = () => div.onmousemove = undefined;
 }
