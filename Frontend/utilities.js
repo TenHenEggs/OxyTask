@@ -11,6 +11,9 @@ function request(uri, method, body) {
     }).then(res => {
         if (res.status !== 200 && res.status !== 201 && res.status !== 202) throw new Error('Request failed with code ' + res.status);
         return res.json();
+    }).then(res => {
+        if (res.success) return res.data;
+        else throw new Error(res.error);
     });
 }
 
