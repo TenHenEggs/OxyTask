@@ -5,21 +5,18 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class User {
     @Id
-    @GeneratedValue(strategy =  GenerationType.AUTO)
-    @Getter
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
     private String Login;
-    @Column
-    @Lob @Getter @Setter
+    @Column @Setter
     private String email;
-    @Column
-    @Lob @Getter @Setter
+    @Column @Setter
     private String salt;
-    @Column
-    @Lob @Getter @Setter
+    @Column @Setter
     private String passwordHash;
 
 }
