@@ -22,6 +22,7 @@ class Task {
         this.list = 0;
         this.subs = [];
         this.deps = [];
+        this.tags = [];
 
         this.generateElement();
         this.generateSearchElement();
@@ -91,7 +92,13 @@ class Task {
             progress.children[0].classList = 'progress-bar bg-' + color;
         }
         this.deps.forEach(dep => {
-            if (dep.list !== 4) button.classList.add('opacity-50');
+            if (tasks.find(task => task.id === dep.id) === undefined) this.deps.splice(this.deps.indexOf(dep), 1);
+            else if (dep.list !== 4) button.classList.add('opacity-50');
+        });
+        const tags = button.children[2];
+        tags.innerHTML = '';
+        this.tags.forEach(dep => {
+            tags.append(dep.element.cloneNode(true));
         });
         this.searchElement.innerHTML = this.name + '#' + this.id;
     }
@@ -99,6 +106,7 @@ class Task {
     delete() {
         this.element.parentElement.removeChild(this.element);
         tasks.splice(tasks.findIndex(task => task.id === this.id), 1);
+        updateState();
     }
 }
 

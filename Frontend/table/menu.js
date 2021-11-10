@@ -1,6 +1,7 @@
 const SubTask = require('./SubTask');
 
 let tasks;
+let tags;
 
 const elements = {
     'addSub': document.getElementById('addSub'),
@@ -15,6 +16,8 @@ const elements = {
     'modifyTask': document.getElementById('modifyTask'),
     'subLabel': document.getElementById('subLabel'),
     'subtasks': document.getElementById('subtasks'),
+    'tagLabel': document.getElementById('tagLabel'),
+    'tags': document.getElementById('tags'),
     'taskMenu': document.getElementById('taskMenu'),
     'taskSearch': document.getElementById('taskSearch'),
     'taskSearchList': document.getElementById('taskSearchList')
@@ -30,6 +33,7 @@ function setup(task) {
     form.deadline.value = task.deadline;
 
     elements['addSub'].classList.add('d-none');
+    elements['tagLabel'].classList.add('d-none');
     elements['subLabel'].classList.add('d-none');
     elements['depLabel'].classList.add('d-none');
     elements['taskSearch'].classList.add('d-none');
@@ -38,6 +42,7 @@ function setup(task) {
     elements['modifyTask'].onclick = () => enterEditMode(task);
     elements['subtasks'].innerHTML = '';
     elements['deptasks'].innerHTML = '';
+    elements['tags'].innerHTML = '';
     elements['taskMenu'].classList.remove('border-warning');
     elements['taskMenu'].classList.add('border-info');
     elements['taskSearchList'].innerHTML = '';
@@ -50,8 +55,14 @@ function setup(task) {
         }
     }
 
+    if (task.tags.length > 0) elements['tagLabel'].classList.remove('d-none');
     if (task.subs.length > 0) elements['subLabel'].classList.remove('d-none');
     if (task.deps.length > 0) elements['depLabel'].classList.remove('d-none');
+
+    task.tags.forEach(tag => {
+        const element = tag.element.cloneNode(true);
+        elements['tags'].append(element);
+    });
 
     task.subs.forEach(sub => {
         sub.element.children[0].classList.remove('d-none');
@@ -77,10 +88,12 @@ function enterEditMode(task) {
     form.name.value = task.name;
     form.description.value = task.description;
 
+    const newTags = [...task.tags];
     const newSubs = [...task.subs];
     const newDeps = [...task.deps];
 
     elements['addSub'].classList.remove('d-none');
+    elements['tagLabel'].classList.remove('d-none');
     elements['subLabel'].classList.remove('d-none');
     elements['depLabel'].classList.remove('d-none');
     elements['taskSearch'].classList.remove('d-none');
@@ -88,11 +101,19 @@ function enterEditMode(task) {
     elements['cancelModification'].classList.remove('d-none');
     elements['cancelModification'].onclick = () => setup(task);
     elements['modifyTask'].innerHTML = 'Zapisz zmiany';
-    elements['modifyTask'].onclick = () => saveChanges(task, newSubs, newDeps);
+    elements['modifyTask'].onclick = () => saveChanges(task, newSubs, newDeps, newTags);
     elements['taskMenu'].classList.add('border-warning');
     elements['taskMenu'].classList.remove('border-info');
     elements['taskSearch'].onfocus = () => search(task, newDeps);
     elements['taskSearch'].oninput = () => search(task, newDeps);
+
+    elements['tags'].innerHTML = '';
+    tags.forEach(tag => {
+        if (task.tags.find(t => t.id === tag.id) !== undefined)
+            elements['tags'].append(containedTagElement(tag, newTags));
+        else
+            elements['tags'].append(notContainedTagElement(tag, newTags));
+    });
 
     task.subs.forEach(sub => {
         sub.element.children[0].classList.add('d-none');
@@ -107,23 +128,62 @@ function enterEditMode(task) {
         const depsElements = elements['deptasks'].children;
         depsElements[i].children[0].classList.remove('d-none');
         depsElements[i].children[0].onclick = () => {
-            elements['deptasks'].removeChild(depsElements[i]);
+            elements['deptasks'].removeChild(depsElements[newDeps.indexOf(dep)]);
             newDeps.splice(newDeps.indexOf(dep), 1);
         };
     });
 }
 
-function saveChanges(task, newSubs, newDeps) {
+function saveChanges(task, newSubs, newDeps, newTags) {
     const form = document.taskModification;
     task.name = form.name.value;
     task.description = form.description.value;
     task.deadline = form.deadline.value;
+    task.tags.forEach(tag => tag.tasks.splice(tag.tasks.indexOf(task), 1));
+    task.tags = [...newTags];
     task.subs = [...newSubs];
     task.deps = [...newDeps];
     task.subs.forEach(sub => sub.name = sub.element.children[2].value);
+    task.tags.forEach(tag => tag.tasks.push(task));
 
     task.update();
     setup(task);
+}
+
+function containedTagElement(tag, tags) {
+    const element = tag.element.cloneNode(true);
+    element.children[0].classList.add('border', 'border-2', 'border-success');
+    element.onmouseenter = () => {
+        element.children[0].innerHTML = '-';
+        element.children[0].classList.add('bg-danger');
+    };
+    element.onmouseleave = () => {
+        element.children[0].innerHTML = tag.name;
+        element.children[0].classList.remove('bg-danger');
+    };
+    element.onclick = () => {
+        tags.splice(tags.indexOf(tag), 1);
+        element.parentElement.replaceChild(notContainedTagElement(tag, tags), element);
+    };
+    return element;
+}
+
+function notContainedTagElement(tag, tags) {
+    const element = tag.element.cloneNode(true);
+    element.children[0].classList.add('border', 'border-2', 'border-danger');
+    element.onmouseenter = () => {
+        element.children[0].innerHTML = '+';
+        element.children[0].classList.add('bg-success');
+    };
+    element.onmouseleave = () => {
+        element.children[0].innerHTML = tag.name;
+        element.children[0].classList.remove('bg-success');
+    };
+    element.onclick = () => {
+        tags.push(tag);
+        element.parentElement.replaceChild(containedTagElement(tag, tags), element);
+    };
+    return element;
 }
 
 function addSubTask(task, name, subs) {
@@ -179,7 +239,12 @@ function setTaskArray(taskArray) {
     tasks = taskArray;
 }
 
+function setTagArray(tagArray) {
+    tags = tagArray;
+}
+
 module.exports = {
     setup: setup,
-    setTaskArray: setTaskArray
+    setTaskArray: setTaskArray,
+    setTagArray: setTagArray
 }

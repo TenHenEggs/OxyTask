@@ -32,32 +32,32 @@
             <div class="col h-100" id="lists">
                 <div class="fluid-container bg-dark text-center fs-5 fw-bold overflow-auto h-100">
                     <div class="row g-10 m-0 h-100 flex-nowrap">
-                        <div class="col h-100 d-flex flex-column">
-                            <p class="border border-info border-3 rounded-pill tasklist">
+                        <div class="col h-100 d-flex flex-column tasklist">
+                            <p class="border border-info border-3 rounded-pill">
                                 Pomysły
                             </p>
                             <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_0"></div>
                         </div>
-                        <div class="col h-100 d-flex flex-column">
-                            <p class="border border-info border-3 rounded-pill tasklist">
+                        <div class="col h-100 d-flex flex-column tasklist">
+                            <p class="border border-info border-3 rounded-pill">
                                 Do Zrobienia
                             </p>
                             <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_1"></div>
                         </div>
-                        <div class="col h-100 d-flex flex-column">
-                            <p class="border border-info border-3 rounded-pill tasklist">
+                        <div class="col h-100 d-flex flex-column tasklist">
+                            <p class="border border-info border-3 rounded-pill">
                                 W Trakcie
                             </p>
                             <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_2"></div>
                         </div>
-                        <div class="col h-100 d-flex flex-column">
-                            <p class="border border-info border-3 rounded-pill tasklist">
+                        <div class="col h-100 d-flex flex-column tasklist">
+                            <p class="border border-info border-3 rounded-pill">
                                 Testowanie
                             </p>
                             <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_3"></div>
                         </div>
-                        <div class="col h-100 d-flex flex-column">
-                            <p class="border border-info border-3 rounded-pill tasklist">
+                        <div class="col h-100 d-flex flex-column tasklist">
+                            <p class="border border-info border-3 rounded-pill">
                                 Ukończone
                             </p>
                             <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_4"></div>
@@ -73,6 +73,15 @@
                     <button type="button" class="btn btn-outline-success rounded-0" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
                         Utwórz zadanie
                     </button>
+                    <p class="m-2 fs-3 text-center">
+                        Tagi
+                    </p>
+                    <button type="button" class="btn btn-outline-success rounded-0" data-bs-toggle="modal" data-bs-target="#tagCreationModal">
+                        Utwórz tag
+                    </button>
+                    <div>
+                        <div id="menuTags" class="d-flex flex-wrap pt-2 pb-2 align-items-start overflow-hidden"></div>
+                    </div>
                 </div>
             </div>
             <div class="col border-top border-start border-3 border-info d-none h-100 overflow-auto" id="taskMenu">
@@ -85,6 +94,12 @@
                                 Termin:
                             </span>
                             <input type='date' class="form-control bg-dark text-light rounded-0" name="deadline">
+                        </div>
+                        <p id="tagLabel" class="m-0 p-2 fs-4 text-center">
+                            Tagi
+                        </p>
+                        <div>
+                            <div id="tags" class="d-flex flex-wrap align-items-start overflow-hidden"></div>
                         </div>
                         <p id="subLabel" class="m-0 p-2 fs-4 text-center">
                             Podzadania
@@ -166,6 +181,35 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="tagCreationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Tworzenie tagu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form name="modalNewTag">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Nazwa tagu">
+                            <span class="input-group-text bg-dark text-light">
+                                Kolor
+                            </span>
+                            <input type="color" class="form-control form-control-color bg-dark" name="color">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalTagCreationButton">
+                        Utwórz
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal" id="taskDeletionModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content bg-dark text-light">
@@ -207,6 +251,7 @@
                 <div class="progress m-2 d-none">
                     <div class="progress-bar"></div>
                 </div>
+                <div id="tags" class="d-flex flex-wrap align-items-start overflow-hidden"></div>
             </button>
         </div>
     </div>
@@ -217,6 +262,11 @@
         <div class="input-group p-0">
             <button type="button" class="btn btn-outline-danger rounded-0">x</button>
             <span class="input-group-text bg-dark rounded-0 flex-grow-1"></span>
+        </div>
+    </div>
+    <div class="d-none" id="tagPrototype">
+        <div class="p-1">
+            <span class="badge"></span>
         </div>
     </div>
 
