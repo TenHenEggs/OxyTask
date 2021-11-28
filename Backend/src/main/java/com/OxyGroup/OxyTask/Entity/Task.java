@@ -21,10 +21,13 @@ public class Task {
     private String description;
 
     @Column @Setter @Getter
-    private String date;
+    private String deadline;
 
    @Setter @ManyToOne @JoinColumn(name = "project_id")
     private Project project;
+
+   @Column @Setter
+    private long list;
 
    @Setter @ManyToMany
    @JoinTable(

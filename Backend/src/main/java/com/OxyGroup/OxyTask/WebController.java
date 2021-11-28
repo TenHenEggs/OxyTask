@@ -2,11 +2,10 @@ package com.OxyGroup.OxyTask;
 
 import com.OxyGroup.OxyTask.Entity.Repositories.ProjectsRepo;
 import com.OxyGroup.OxyTask.Entity.Project;
+import com.OxyGroup.OxyTask.Entity.Repositories.TagRepo;
 import com.OxyGroup.OxyTask.Entity.Repositories.TaskRepo;
+import com.OxyGroup.OxyTask.Entity.Tag;
 import com.OxyGroup.OxyTask.Entity.Task;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,8 @@ public class WebController {
     @Autowired
     private TaskRepo taskRepo;
 
-    private ObjectMapper JSONMapper = new ObjectMapper();
+    @Autowired
+    private TagRepo tagRepo;
 
     //-----------------------------------------------//
     //               GET MAPPING                     //
@@ -40,15 +40,17 @@ public class WebController {
         return new Result<>(true).withData(projectsRepo.findById(projectId).get().allTasks());
     }
 
+    @GetMapping(value = "/tables/{projectId}/tags/")
+    public  Result<Set<Tag>> getProjectTags(@PathVariable long projectId){
+        return new Result<>(true).withData(projectsRepo.findById(projectId).get().allTags());
+    }
     //-----------------------------------------------//
     //               POST MAPPING                    //
     //-----------------------------------------------//
 
 
     @PostMapping(value = "/tables")
-    public Result<Long> createProject(@RequestBody String data) throws JsonProcessingException {
-        Project newProject = JSONMapper.readValue(data, Project.class); //JSON to Tables class
-
+    public Result<Long> createProject(@RequestBody Project newProject){
 
         Pattern pattern = Pattern.compile("[#%&*:<>?|/]");
         Matcher matcher = pattern.matcher(newProject.getName());
@@ -61,20 +63,34 @@ public class WebController {
     }
 
     @PostMapping(value = "/tables/{projectId}/tasks")
-    public Result<Task> createTask(@PathVariable long projectId, @RequestBody String data) throws JsonProcessingException {
+    public Result<Task> createTask(@PathVariable long projectId, @RequestBody Task newTask) {
 
-      Task newTask = JSONMapper.readValue(data, Task.class);
 
       newTask.setProject(projectsRepo.findById(projectId).get());
       taskRepo.save(newTask);
 
       return new Result<>(true).withData(newTask);
     }
+    @PostMapping(value = "/tables/{projectId}/tags/")
+    public Result<Long> createTag(@PathVariable long projectId, @RequestBody Tag newTag){
+
+
+
+        newTag.setProject(projectsRepo.findById(projectId).get());
+        tagRepo.save(newTag);
+
+        return new Result<>(true).withData(newTag.getId());
+    }
 
     //-----------------------------------------------//
     //               DELETE MAPPING                  //
     //-----------------------------------------------//
 
+    @DeleteMapping(value = "//tables/{tableId}/tags/{tagId} ")
+    public Result<String> deleteTag(@PathVariable long tagId){
+        tagRepo.deleteById(tagId);
+        return new Result<>(true);
+    }
 
     @DeleteMapping(value ="/tables/{id}")
     public Result<String> deleteProject(@PathVariable long id) {
@@ -85,6 +101,30 @@ public class WebController {
     @DeleteMapping(value = "/tables/{projectId}/tasks/{taskId}")
     public Result<String> deleteTask(@PathVariable long taskId){
         taskRepo.deleteById(taskId);
+        return new Result<>(true);
+    }
+
+    //-----------------------------------------------//
+    //               PATCH MAPPING                   //
+    //-----------------------------------------------//
+
+    @PatchMapping(value = " /tables/{TableId}/tasks/{TaskId}")
+    public Result<String> pushTask(@RequestBody long list, @PathVariable long TaskId){
+        Task task = taskRepo.findById(TaskId).get();
+        task.setList(list);
+        taskRepo.save(task);
+        return new Result<>(true);
+    }
+
+    //-----------------------------------------------//
+    //               PUT MAPPING                     //
+    //-----------------------------------------------//
+
+    @PutMapping(value = "/tables/{TableId}/tasks/{TaskId}")
+    public Result<String> updateTask(@RequestBody Task updateTask, @PathVariable long TaskId){
+        Task task = taskRepo.findById(TaskId).get();
+        task = updateTask;
+        taskRepo.save(task);
         return new Result<>(true);
     }
 }

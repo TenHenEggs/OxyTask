@@ -1,6 +1,11 @@
-
+.gitignore
 .idea/misc.xml
 .idea/misc.xml
 .idea/misc.xml
 .idea/modules.xml
 .idea/runConfigurations.xml
+Frontend/package.json
+Frontend/package-lock.json
+Frontend/package-lock.json
+Frontend/package.json
+Frontend/package.json

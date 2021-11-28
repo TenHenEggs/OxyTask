@@ -1,6 +1,7 @@
 package com.OxyGroup.OxyTask.Entity;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -18,4 +19,6 @@ public class Tag {
     private String name;
     @ManyToMany
     private Set<Task> tasks;
+    @Setter @ManyToOne @JoinColumn(name = "project_id")
+    private Project project;
 }

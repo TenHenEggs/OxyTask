@@ -7,19 +7,25 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Getter
+
 public class Project {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Getter @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column @Setter
+    @Column @Setter @Getter
     private String name;
 
-   @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project")
     private Set<Task> tasks;
 
-   public Set<Task> allTasks(){
-       return tasks;
-   }
+    @OneToMany(mappedBy = "project")
+    private  Set<Tag> tags;
+
+    public Set<Task> allTasks(){
+        return tasks;
+    }
+
+    public Set<Tag> allTags(){ return  tags;}
 }
