@@ -26,7 +26,7 @@ public class Task {
    @Setter @ManyToOne @JoinColumn(name = "project_id")
     private Project project;
 
-   @Column @Setter
+   @Column @Setter @Getter
     private long list;
 
    @Setter @ManyToMany
