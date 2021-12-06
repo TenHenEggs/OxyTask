@@ -38,4 +38,11 @@ public class Task {
     private Set<Tag> tags;
 
    public Set<Tag> allTags(){return tags;}
+
+    public void update(Task newData){
+       this.name = newData.getName();
+       this.description = newData.getDescription();
+       this.deadline = newData.getDeadline();
+       this.list = newData.getList();
+    }
 }

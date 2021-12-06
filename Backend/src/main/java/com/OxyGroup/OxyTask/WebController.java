@@ -123,7 +123,7 @@ public class WebController {
     @PutMapping(value = "/tables/{TableId}/tasks/{TaskId}")
     public Result<String> updateTask(@RequestBody Task updateTask, @PathVariable long TaskId){
         Task task = taskRepo.findById(TaskId).get();
-        task = updateTask;
+        task.update(updateTask);
         taskRepo.save(task);
         return new Result<>(true);
     }
