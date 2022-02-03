@@ -37,7 +37,7 @@ function toggleTaskMenu(task) {
 
 function goBack() {
     sessionStorage.removeItem('table');
-    location.href = '../index.html';
+    location.href = '../menu/index.html';
 }
 
 document.getElementById('back').onclick = () => goBack();

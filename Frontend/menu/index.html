@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-100">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../scrollbar.css">
+</head>
+
+<body class="bg-dark text-light d-flex flex-column h-100 user-select-none">
+  <div class="container-fluid text-center mb-3">
+    <div class="row">
+      <div class="col-9 border border-3 border-primary p-2">
+        <p class="m-0">
+          Twoje tablice
+        </p>
+      </div>
+      <div class="col-3 p-0">
+        <button id="new" type="button" class="btn btn-outline-success rounded-0 w-100 h-100">
+          +Nowa
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid overflow-auto">
+    <div id="tables" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-10 gy-4 p-3"></div>
+  </div>
+
+  <script>
+    require('popper.js');
+  </script>
+  <script>
+    require('bootstrap');
+  </script>
+  <script>
+    require('./index.js');
+  </script>
+
+</body>
+
+</html>
