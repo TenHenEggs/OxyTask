@@ -1,3 +1,4 @@
+const alert = require('../alert')
 const utilities = require('../utilities.js');
 const modals = require('./modals');
 
@@ -41,14 +42,6 @@ class Table {
     button.innerHTML = this.name;
     const deleteCol = row.children[1];
     deleteCol.children[0].onclick = () => this.showDeleteModal();
-    row.onmouseenter = () => {
-      deleteCol.classList.remove('d-none');
-      button.classList.add('rounded-0');
-    };
-    row.onmouseleave = () => {
-      deleteCol.classList.add('d-none');
-      button.classList.remove('rounded-0');
-    };
     return div;
   }
 

@@ -11,6 +11,7 @@ function showCreateModal() {
 
 function createTable() {
   const name = document.createModalForm.name.value;
+  if (name === '') return;
   utilities.request('/api/tables', 'POST', utilities.serializeForm(document.createModalForm))
     .then(res => new Table(name, res))
     .catch(err => alert(err));
@@ -22,6 +23,6 @@ function fetchTables() {
     .catch(err => alert(err));
 }
 
+document.getElementById('createModalButton').onclick = createTable;
+document.getElementById('new').onclick = showCreateModal;
 fetchTables();
-document.getElementById('createModalButton').onclick = () => createTable();
-document.getElementById('new').onclick = () => showCreateModal();

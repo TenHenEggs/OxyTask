@@ -1,0 +1,8 @@
+.col .row:hover .col-1 {
+  display: block !important;
+}
+
+.col .row:hover .rounded-start {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
