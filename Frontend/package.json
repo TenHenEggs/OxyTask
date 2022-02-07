@@ -4,7 +4,8 @@
   "description": "Tables of tasks",
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron ."
+    "start": "./node_modules/.bin/electron .",
+    "startw": ".\\node_modules\\.bin\\electron ."
   },
   "author": "OxyGroup",
   "license": "ISC",
