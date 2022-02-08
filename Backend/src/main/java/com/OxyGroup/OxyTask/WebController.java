@@ -10,6 +10,7 @@ import com.OxyGroup.OxyTask.Entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Console;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,10 +56,13 @@ public class WebController {
         Pattern pattern = Pattern.compile("[#%&*:<>?|/]");
         Matcher matcher = pattern.matcher(newProject.getName());
 
-        if (matcher.find())
+        if (matcher.find()){
+            System.out.println("chuja");
             return new Result<Long>(false).withError("name is not allowed");
+        }
 
         projectsRepo.save(newProject);
+        System.out.println("gitówa");
         return new Result<Long>(true).withData(newProject.getId());
     }
 
@@ -94,6 +98,9 @@ public class WebController {
 
     @DeleteMapping(value ="/tables/{id}")
     public Result<String> deleteProject(@PathVariable long id) {
+        for (var element: projectsRepo.findById(id).get().allTasks()) {
+            taskRepo.delete(element);
+        }
         projectsRepo.deleteById(id);
         return new Result<>(true);
     }
