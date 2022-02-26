@@ -32,9 +32,9 @@ const deleteModal = modal({
       Usuń
     </button>
   `
-})
+});
 
 module.exports = {
   create: createModal,
   delete: deleteModal
-}
+};

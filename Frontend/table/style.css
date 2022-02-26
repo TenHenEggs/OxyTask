@@ -1,0 +1,59 @@
+form[readonly] :is(#addSub, #tagLabel, #subLabel, #depLabel, #editTags, #taskSearch,
+  #cancelEditButton, #subtasks button, #depedencies button, #saveChangesButton),
+form:not([readonly]) :is(#subtasks span, #taskTags, #enterEditModeButton) {
+  display: none !important;
+}
+
+div[menu=none]>#lists {
+  display: block !important;
+  flex: 1 0 0%;
+}
+
+:is(div[menu="none"], div:not([menu="menu"]))>#menu,
+:is(div[menu="none"], div[menu="menu"])>#taskMenu {
+  display: none;
+}
+
+.badge[unused]:not(:hover) {
+  opacity: 50%;
+}
+
+.badge:hover>._del,
+.badge:hover[unused]>._add,
+.badge:hover:not([unused])>._rem {
+  display: inline !important;
+}
+
+.addon {
+  font-size: 1em;
+}
+
+#wrapper:empty {
+  display: none;
+}
+
+.depedency {
+  white-space: normal;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+.task-list {
+  min-width: 250px;
+  max-width: 20%;
+}
+
+.bar-button {
+  max-width: 75px;
+}
+
+.progress {
+  height: 5px;
+}
+
+.list::-webkit-scrollbar {
+  width: .2rem;
+  height: .5rem;
+}

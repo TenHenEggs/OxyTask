@@ -1,4 +1,4 @@
-const utilities = require('./utilities.js');
+const utilities = require('./utilities');
 
 const storage = utilities.elementFromString(`
   <div class="fixed-bottom"></div>
@@ -27,4 +27,4 @@ function add(err) {
 module.exports = (err) => {
   if (!init) initialize();
   add(err);
-}
+};

@@ -1,21 +1,7 @@
-const alert = require('../alert')
-const utilities = require('../utilities.js');
+const utilities = require('../utilities');
+const templates = require('./templates');
 const modals = require('./modals');
-
-const template = utilities.elementFromString(`
-  <div class="col">
-    <div class="row w-100 g-0">
-      <div class="col">
-        <button type="button" class="btn btn-outline-light p-3 rounded-start text-center w-100 overflow-hidden"></button>
-      </div>
-      <div class="col-1 d-none">
-        <button type="button" class="btn btn-outline-danger rounded-0 rounded-end w-100 h-100 p-0">
-          x
-        </button>
-      </div>
-    </div>
-  </div>
-`);
+const alert = require('../alert');
 
 const tables = [];
 const tablesElements = [];
@@ -35,13 +21,13 @@ class Table {
   }
 
   generateElement() {
-    const div = template.cloneNode(true);
+    const div = templates.table();
     const row = div.children[0];
     const button = row.children[0].children[0];
-    button.onclick = () => this.open();
+    button.onclick = _ => this.open();
     button.innerHTML = this.name;
     const deleteCol = row.children[1];
-    deleteCol.children[0].onclick = () => this.showDeleteModal();
+    deleteCol.children[0].onclick = _ => this.showDeleteModal();
     return div;
   }
 
@@ -52,14 +38,14 @@ class Table {
 
   showDeleteModal() {
     tableName.innerHTML = this.name;
-    deleteButton.onclick = () => this.delete();
+    deleteButton.onclick = _ => this.delete();
     modals.delete.show();
   }
 
   delete() {
-    utilities.request('/api/tables/' + this.id, 'DELETE').then(() => {
+    utilities.request('/api/tables/' + this.id, 'DELETE').then(_ => {
       const index = tables.findIndex(table => table.id === this.id);
-      storage.removeChild(tablesElements[index]);
+      storage.children[index].remove();
       tables.splice(index, 1);
       tablesElements.splice(index, 1);
     }).catch(err => alert(err));

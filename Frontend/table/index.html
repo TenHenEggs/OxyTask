@@ -2,277 +2,118 @@
 <html lang="pl" class="h-100">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../scrollbar.css">
-    <link rel="stylesheet" href="./index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../scrollbar.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 
 <body class="bg-dark h-100 text-light overflow-hidden user-select-none">
-    <div class="d-none" id="wrapper"></div>
-    <div class="d-none border" id="placeholder"></div>
-    <div class="fluid-container h-100 d-flex flex-column">
-        <div class="row g-1 m-0 mb-3">
-            <div class="col-1 barbutton">
-                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="back">
-                    <img class="mh-100 mw-100" src="back.png">
-                </button>
-            </div>
-            <div class="col align-self-center">
-                <p class="text-center mb-0 fs-1 fw-bold user-select-none" id="tableName"></p>
-            </div>
-            <div class="col-1 barbutton">
-                <button type="button" class="btn btn-primary w-100 h-100 p-1" id="menuButton">
-                    <img class="mh-100 mw-100" src="menu.png">
-                </button>
-            </div>
-        </div>
-        <div class="row m-0 flex-grow-1 flex-nowrap overflow-auto">
-            <div class="col h-100" id="lists">
-                <div class="fluid-container bg-dark text-center fs-5 fw-bold overflow-auto h-100">
-                    <div class="row g-10 m-0 h-100 flex-nowrap">
-                        <div class="col h-100 d-flex flex-column tasklist">
-                            <p class="border border-info border-3 rounded-pill">
-                                Pomysły
-                            </p>
-                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_0"></div>
-                        </div>
-                        <div class="col h-100 d-flex flex-column tasklist">
-                            <p class="border border-info border-3 rounded-pill">
-                                Do Zrobienia
-                            </p>
-                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_1"></div>
-                        </div>
-                        <div class="col h-100 d-flex flex-column tasklist">
-                            <p class="border border-info border-3 rounded-pill">
-                                W Trakcie
-                            </p>
-                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_2"></div>
-                        </div>
-                        <div class="col h-100 d-flex flex-column tasklist">
-                            <p class="border border-info border-3 rounded-pill">
-                                Testowanie
-                            </p>
-                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_3"></div>
-                        </div>
-                        <div class="col h-100 d-flex flex-column tasklist">
-                            <p class="border border-info border-3 rounded-pill">
-                                Ukończone
-                            </p>
-                            <div class="row row-cols-1 justify-content-center g-3 overflow-auto ms-2 me-2 list" id="list_4"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col border-top border-start border-3 border-info d-none h-100 overflow-auto" id="menu">
-                <div class="row row-cols-1">
-                    <button type="button" class="btn btn-outline-danger rounded-0" data-bs-toggle="modal" data-bs-target="#tableDeletionModal">
-                        Usuń tablicę
-                    </button>
-                    <button type="button" class="btn btn-outline-success rounded-0" data-bs-toggle="modal" data-bs-target="#taskCreationModal">
-                        Utwórz zadanie
-                    </button>
-                    <p class="m-2 fs-3 text-center">
-                        Tagi
-                    </p>
-                    <button type="button" class="btn btn-outline-success rounded-0" data-bs-toggle="modal" data-bs-target="#tagCreationModal">
-                        Utwórz tag
-                    </button>
-                    <div>
-                        <div id="menuTags" class="d-flex flex-wrap pt-2 pb-2 align-items-start overflow-hidden"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col border-top border-start border-3 border-info d-none h-100 overflow-auto" id="taskMenu">
-                <div class="row row-cols-1">
-                    <form class="p-0" name="taskModification">
-                        <input type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0 text-wrap fs-5 text-center" name="name">
-                        <textarea rows="4" type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="description"></textarea>
-                        <div class="input-group">
-                            <span class="p-2 input-group-text p-0 bg-dark text-light rounded-0">
-                                Termin:
-                            </span>
-                            <input type='date' class="form-control bg-dark text-light rounded-0" name="deadline">
-                        </div>
-                        <p id="tagLabel" class="m-0 p-2 fs-4 text-center">
-                            Tagi
-                        </p>
-                        <div>
-                            <div id="tags" class="d-flex flex-wrap align-items-start overflow-hidden"></div>
-                        </div>
-                        <p id="subLabel" class="m-0 p-2 fs-4 text-center">
-                            Podzadania
-                        </p>
-                        <div class="row row-cols-1 m-0" id="subtasks"></div>
-                        <div id="addSub">
-                            <div class="input-group p-0">
-                                <button type="button" class="btn btn-outline-success rounded-0" id="addSubButton">
-                                    Dodaj
-                                </button>
-                                <input type="text" placeholder="Nazwa podzadania" class="form-control bg-dark text-light rounded-0" name="newSubName">
-                            </div>
-                        </div>
-                        <p id="depLabel" class="m-0 p-2 fs-4 text-center">
-                            Zależności
-                        </p>
-                        <div class="row row-cols-1 m-0" id="deptasks"></div>
-                        <input type="text" placeholder="Nazwa zadania" id="taskSearch" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="taskSearch">
-                        <div id="taskSearchList" class="list-group rounded-0"></div>
-                    </form>
-                    <button type="button" class="btn btn-outline-warning rounded-0" id="modifyTask"></button>
-                    <button type="button" class="btn btn-outline-secondary rounded-0" id="cancelModification">
-                        Anuluj zmiany
-                    </button>
-                    <button type="button" class="btn btn-outline-danger rounded-0" data-bs-toggle="modal" data-bs-target="#taskDeletionModal" id="deleteTask">
-                        Usuń zadanie
-                    </button>
-                </div>
-            </div>
-        </div>
+  <div id="wrapper" class="position-absolute"></div>
+  <div class="fluid-container h-100 d-flex flex-column">
+    <div class="row g-1 m-0 mb-3">
+      <div class="col-1 bar-button">
+        <button type="button" class="btn btn-primary w-100 h-100 p-1" id="back">
+          <img class="mh-100 mw-100" src="back.png">
+        </button>
+      </div>
+      <div class="col align-self-center">
+        <p class="text-center mb-0 fs-1 fw-bold user-select-none" id="tableName"></p>
+      </div>
+      <div class="col-1 bar-button">
+        <button type="button" class="btn btn-primary w-100 h-100 p-1" id="menuButton">
+          <img class="mh-100 mw-100" src="menu.png">
+        </button>
+      </div>
     </div>
+    <div class="row m-0 flex-grow-1 flex-nowrap overflow-auto" menu="none">
+      <div class="h-100 d-none d-sm-block col-sm-6 col-md-8 col-xl-9 col-xxl-10" id="lists">
+        <div class="fluid-container bg-dark text-center fs-5 fw-bold overflow-auto h-100">
+          <div class="row g-10 m-0 h-100 flex-nowrap">
+          </div>
+        </div>
+      </div>
+      <div class="col border-top border-start border-3 border-info h-100 overflow-auto" id="menu">
+        <div class="row row-cols-1">
+          <button type="button" class="btn btn-outline-danger rounded-0" id="deleteTableButton">
+            Usuń tablicę
+          </button>
+          <button type="button" class="btn btn-outline-success rounded-0" id="createTaskButton">
+            Utwórz zadanie
+          </button>
+          <p class="m-0 p-2 fs-3 text-center">
+            Tagi
+          </p>
+          <button type="button" class="btn btn-outline-success rounded-0" id="createTagButton">
+            Utwórz tag
+          </button>
+          <div id="menuTags" class="p-1 d-flex flex-wrap align-items-start overflow-hidden"></div>
+        </div>
+      </div>
+      <div class="col border-top border-start border-3 border-info h-100 overflow-auto" id="taskMenu">
+        <div class="row row-cols-1">
+          <form class="p-0" name="taskEditing">
+            <fieldset>
+              <input type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0 text-wrap fs-5 text-center" name="name">
+              <textarea rows="4" type="text" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="description"></textarea>
+              <div class="input-group">
+                <span class="p-2 input-group-text p-0 bg-dark text-light rounded-0">
+                  Termin:
+                </span>
+                <input type='date' class="form-control bg-dark text-light rounded-0" name="deadline">
+              </div>
+              <p id="tagLabel" class="m-2 fs-4 text-center">
+                Tagi
+              </p>
+              <div id="taskTags" class="d-flex flex-wrap align-items-start overflow-hidden"></div>
+              <div id="editTags" class="m-1 d-flex flex-wrap align-items-start overflow-hidden"></div>
+              <p id="subLabel" class="m-0 p-2 fs-4 text-center">
+                Podzadania
+              </p>
+              <div class="row row-cols-1 m-0" id="subtasks"></div>
+              <div id="addSub">
+                <div class="input-group p-0">
+                  <button type="button" class="btn btn-outline-success rounded-0" id="addSubButton">
+                    Dodaj
+                  </button>
+                  <input type="text" placeholder="Nazwa podzadania" class="form-control bg-dark text-light rounded-0" name="newSubtaskName">
+                </div>
+              </div>
+              <p id="depLabel" class="m-0 p-2 fs-4 text-center">
+                Zależności
+              </p>
+              <div class="row row-cols-1 m-0" id="depedencies"></div>
+              <input type="text" placeholder="Nazwa zadania" id="taskSearch" class="m-0 p-2 form-control bg-dark text-light rounded-0" name="taskSearch">
+              <div id="taskSearchList" class="list-group rounded-0 overflow-hidden"></div>
+              <button type="button" class="btn btn-outline-warning rounded-0 w-100" id="enterEditModeButton">
+                Edytuj zadanie
+              </button>
+              <button type="button" class="btn btn-outline-warning rounded-0 w-100" id="saveChangesButton">
+                Zapisz zmiany
+              </button>
+              <button type="button" class="btn btn-outline-secondary rounded-0 w-100" id="cancelEditButton">
+                Anuluj zmiany
+              </button>
+              <button type="button" class="btn btn-outline-danger rounded-0 w-100" id="deleteTaskButton">
+                Usuń zadanie
+              </button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="modal" id="tableDeletionModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Usuwanie tablicy</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Czy na pewno chcesz usunąć tablicę <span id="modalTableName" class="text-info"></span>? Operacji tej nie można cofnąć!
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Anuluj
-                    </button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalTableDeletionButton">
-                        Usuń
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="taskCreationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Tworzenie zadania</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form name="modalNewTask">
-                        <input type="text" class="form-control w-100 mb-3 bg-dark text-light" name="name" placeholder="Nazwa zadania">
-                        <input type="text" class="form-control w-100 mb-3 bg-dark text-light" name="description" placeholder="Opis zadania">
-                        <div class="input-group w-100">
-                            <span class="input-group-text bg-dark text-light">Termin</span>
-                            <input type="date" class="form-control flex-grow-1 bg-dark text-light" name="deadline">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Anuluj
-                    </button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalTaskCreationButton">
-                        Utwórz
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="tagCreationModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Tworzenie tagu</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form name="modalNewTag">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-dark text-light" name="name" placeholder="Nazwa tagu">
-                            <span class="input-group-text bg-dark text-light">
-                                Kolor
-                            </span>
-                            <input type="color" class="form-control form-control-color bg-dark" name="color">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Anuluj
-                    </button>
-                    <button type="button" class="btn btn-success" data-bs-dismiss="modal" id="modalTagCreationButton">
-                        Utwórz
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="taskDeletionModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title">Usuwanie zadania</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Czy na pewno chcesz usunąć zadanie <span id="modalTaskName" class="text-info"></span>? Operacji tej nie można cofnąć!
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        Anuluj
-                    </button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="modalTaskDeletionButton">
-                        Usuń
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="d-none" id="subPrototype">
-        <div class="input-group p-0">
-            <span class="input-group-text bg-dark rounded-0">
-                <input type="checkbox" class="border mt-0 form-check-input bg-dark text-light">
-            </span>
-            <button type="button" class="btn btn-outline-danger rounded-0">x</button>
-            <input type="text" class="form-control bg-dark text-light rounded-0">
-        </div>
-    </div>
-    <div class="d-none" id="taskPrototype">
-        <div>
-            <button class="btn border-3 h-100 w-100 fw-bold fs-6 p-1 overflow-hidden bg-dark">
-                <p class="m-0">
-                    <span></span>
-                    <span class="text-secondary opacity-50"></span>
-                </p>
-                <div class="progress m-2 d-none">
-                    <div class="progress-bar"></div>
-                </div>
-                <div id="tags" class="d-flex flex-wrap align-items-start overflow-hidden"></div>
-            </button>
-        </div>
-    </div>
-    <div class="d-none" id="taskSearchPrototype">
-        <button type="button" class="list-group-item bg-dark text-start text-light border-light"></button>
-    </div>
-    <div class="d-none" id="depPrototype">
-        <div class="input-group p-0">
-            <button type="button" class="btn btn-outline-danger rounded-0">x</button>
-            <span class="input-group-text bg-dark rounded-0 flex-grow-1"></span>
-        </div>
-    </div>
-    <div class="d-none" id="tagPrototype">
-        <div class="p-1">
-            <span class="badge"></span>
-        </div>
-    </div>
-
-    <script>require('popper.js');</script>
-    <script>require('bootstrap');</script>
-    <script>require('./index.js');</script>
+  <script>
+    require('popper.js');
+  </script>
+  <script>
+    require('bootstrap');
+  </script>
+  <script>
+    require('./index.js');
+  </script>
 </body>
 
 </html>

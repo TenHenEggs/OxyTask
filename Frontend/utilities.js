@@ -33,4 +33,4 @@ module.exports = {
   request: request,
   serializeForm: serializeForm,
   elementFromString: elementFromString
-}
+};
